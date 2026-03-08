@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import FeedPage from "@/components/FeedPage";
@@ -41,6 +41,11 @@ const Index = () => {
     setView({ type: "profile" });
   };
 
+  const handleLogoClick = () => {
+    setActiveTab("feed");
+    setView({ type: "feed" });
+  };
+
   const renderContent = () => {
     switch (view.type) {
       case "event":
@@ -77,7 +82,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <TopBar onProfileClick={handleProfileClick} />
+      <TopBar onProfileClick={handleProfileClick} onLogoClick={handleLogoClick} />
       <main className="pt-16 pb-20 px-4 max-w-lg mx-auto">
         {renderContent()}
       </main>
