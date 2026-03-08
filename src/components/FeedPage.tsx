@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { CalendarDays, LayoutList } from "lucide-react";
+import { CalendarDays, LayoutList, Plus } from "lucide-react";
 import EventCard, { type EventData } from "./EventCard";
 import PersonalCalendar from "./PersonalCalendar";
 import { yourCampusEvents, publicEvents, clubs } from "@/data/mockData";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface FeedPageProps {
   onEventClick: (event: EventData) => void;
@@ -29,7 +31,6 @@ const FeedSection = ({
   </section>
 );
 
-// Separate university clubs from public clubs
 const universityClubs = clubs.filter(c => c.category === "Academic" || c.category === "Technology");
 const publicClubs = clubs.filter(c => c.category !== "Academic" && c.category !== "Technology");
 
@@ -51,14 +52,45 @@ const ClubCard = ({ club, onClick }: { club: typeof clubs[0]; onClick: (id: numb
 const FeedPage = ({ onEventClick, onOrganizerClick }: FeedPageProps) => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [activeSegment, setActiveSegment] = useState<"campus" | "public" | "clubs">("campus");
+  const [showCreateClub, setShowCreateClub] = useState(false);
+  const [newClubName, setNewClubName] = useState("");
+  const [newClubCategory, setNewClubCategory] = useState("");
+  const [extraClubs, setExtraClubs] = useState<typeof clubs>([]);
+
+  const role = (localStorage.getItem("campusconnect-role") as "student" | "teacher") || "student";
 
   const handleClubClick = (clubId: number) => {
     onOrganizerClick?.(clubId);
   };
 
+  const handleCreateClub = () => {
+    if (!newClubName.trim() || !newClubCategory.trim()) {
+      toast.error("Fill in club name and category");
+      return;
+    }
+    const shortName = newClubName.trim().split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+    const newClub = {
+      id: Date.now(),
+      name: newClubName.trim(),
+      shortName,
+      description: `A new club created by a teacher.`,
+      memberCount: 1,
+      category: newClubCategory.trim(),
+      events: [] as number[],
+    };
+    setExtraClubs([...extraClubs, newClub]);
+    setNewClubName("");
+    setNewClubCategory("");
+    setShowCreateClub(false);
+    toast.success(`Club "${newClub.name}" created!`);
+  };
+
+  const allUniversityClubs = [...universityClubs, ...extraClubs.filter(c => c.category === "Academic" || c.category === "Technology")];
+  const allPublicClubs = [...publicClubs, ...extraClubs.filter(c => c.category !== "Academic" && c.category !== "Technology")];
+
   return (
     <div className="pb-4">
-      {/* Top toggle: Feed / Calendar */}
+      {/* Top toggle */}
       <div className="flex items-center gap-2 mb-4">
         <button
           onClick={() => setShowCalendar(false)}
@@ -82,7 +114,7 @@ const FeedPage = ({ onEventClick, onOrganizerClick }: FeedPageProps) => {
         <PersonalCalendar />
       ) : (
         <>
-          {/* Segment toggle: Your Campus / Public Events / Clubs */}
+          {/* Segment toggle */}
           <div className="flex rounded-xl bg-muted/60 p-1 mb-5">
             {(["campus", "public", "clubs"] as const).map((seg) => (
               <button
@@ -105,10 +137,30 @@ const FeedPage = ({ onEventClick, onOrganizerClick }: FeedPageProps) => {
             <FeedSection title="Public Events" events={publicEvents} onCardClick={onEventClick} />
           ) : (
             <div className="space-y-6">
+              {/* Teacher: Create Club */}
+              {role === "teacher" && (
+                <div className="mb-2">
+                  {!showCreateClub ? (
+                    <Button variant="outline" className="w-full rounded-xl text-xs gap-1.5" onClick={() => setShowCreateClub(true)}>
+                      <Plus size={14} /> Create New Club
+                    </Button>
+                  ) : (
+                    <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
+                      <Input placeholder="Club name" value={newClubName} onChange={(e) => setNewClubName(e.target.value)} className="rounded-xl" />
+                      <Input placeholder="Category (e.g. Technology, Arts)" value={newClubCategory} onChange={(e) => setNewClubCategory(e.target.value)} className="rounded-xl" />
+                      <div className="flex justify-end gap-2">
+                        <Button size="sm" variant="ghost" onClick={() => setShowCreateClub(false)} className="rounded-xl text-xs">Cancel</Button>
+                        <Button size="sm" onClick={handleCreateClub} className="rounded-xl text-xs gap-1.5"><Plus size={12} /> Create</Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <section>
                 <h2 className="text-sm font-bold text-foreground mb-3 tracking-wide uppercase opacity-70">Your University Clubs</h2>
                 <div className="flex flex-col gap-2">
-                  {universityClubs.map(club => (
+                  {allUniversityClubs.map(club => (
                     <ClubCard key={club.id} club={club} onClick={handleClubClick} />
                   ))}
                 </div>
@@ -116,7 +168,7 @@ const FeedPage = ({ onEventClick, onOrganizerClick }: FeedPageProps) => {
               <section>
                 <h2 className="text-sm font-bold text-foreground mb-3 tracking-wide uppercase opacity-70">Public Clubs</h2>
                 <div className="flex flex-col gap-2">
-                  {publicClubs.map(club => (
+                  {allPublicClubs.map(club => (
                     <ClubCard key={club.id} club={club} onClick={handleClubClick} />
                   ))}
                 </div>

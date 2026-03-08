@@ -16,6 +16,7 @@ export interface EventData {
   tag?: string;
   participants?: number;
   category?: string;
+  coverImage?: string;
 }
 
 interface EventCardProps {
@@ -36,10 +37,16 @@ const EventCard = ({ event, onCardClick, compact }: EventCardProps) => {
   return (
     <div
       onClick={() => onCardClick(event)}
-      className={`bg-card rounded-2xl shadow-sm border border-border hover:shadow-md transition-all duration-200 cursor-pointer active:scale-[0.98] ${
-        compact ? "p-3 min-w-[240px] max-w-[260px] snap-start" : "p-4"
+      className={`bg-card rounded-2xl shadow-sm border border-border hover:shadow-md transition-all duration-200 cursor-pointer active:scale-[0.98] overflow-hidden ${
+        compact ? "min-w-[240px] max-w-[260px] snap-start" : ""
       }`}
     >
+      {event.coverImage && (
+        <div className="w-full h-32 bg-muted">
+          <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover" />
+        </div>
+      )}
+      <div className={compact ? "p-3" : "p-4"}>
       {event.tag && (
         <span className="inline-block text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-accent/15 text-accent mb-2">
           {event.tag}
@@ -82,6 +89,7 @@ const EventCard = ({ event, onCardClick, compact }: EventCardProps) => {
           {registered ? "Registered ✓" : "Register"}
         </Button>
       )}
+      </div>
     </div>
   );
 };

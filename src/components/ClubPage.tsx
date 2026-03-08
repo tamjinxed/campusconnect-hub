@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Users, Calendar, Plus, Send, CalendarPlus, FileText, Clock, MapPin, MessageCircle } from "lucide-react";
+import { ArrowLeft, Users, Calendar, Plus, Send, CalendarPlus, MessageCircle, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,6 +20,7 @@ interface ClubPost {
   author: string;
   role: "student" | "teacher";
   content: string;
+  imageUrl?: string;
   timestamp: string;
   pending?: boolean;
   comments: { author: string; text: string; time: string }[];
@@ -32,11 +33,13 @@ const ClubPage = ({ clubId, onBack, onEventClick }: ClubPageProps) => {
   const [showPostForm, setShowPostForm] = useState(false);
   const [showEventForm, setShowEventForm] = useState(false);
   const [postContent, setPostContent] = useState("");
+  const [postImageUrl, setPostImageUrl] = useState("");
   const [eventTitle, setEventTitle] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [eventTime, setEventTime] = useState("");
   const [eventLocation, setEventLocation] = useState("");
   const [eventDesc, setEventDesc] = useState("");
+  const [eventCover, setEventCover] = useState("");
   const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
 
   const role = (localStorage.getItem("campusconnect-role") as "student" | "teacher") || "student";
@@ -45,7 +48,7 @@ const ClubPage = ({ clubId, onBack, onEventClick }: ClubPageProps) => {
     { id: 1, author: "Dr. Rahman", role: "teacher", content: "Welcome to the club! Our next meeting is on Thursday at 3 PM. Don't forget to bring your project proposals.", timestamp: "2h ago", comments: [
       { author: "Tamjid Khan", text: "Will be there!", time: "1h ago" },
     ]},
-    { id: 2, author: "Tamjid Khan", role: "student", content: "Excited for the upcoming hackathon! Anyone looking for team members?", timestamp: "5h ago", comments: [] },
+    { id: 2, author: "Tamjid Khan", role: "student", content: "Excited for the upcoming hackathon! Anyone looking for team members?", imageUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&h=300&fit=crop", timestamp: "5h ago", comments: [] },
   ]);
 
   if (!club) {
@@ -69,12 +72,14 @@ const ClubPage = ({ clubId, onBack, onEventClick }: ClubPageProps) => {
       author: isStudent ? "Tamjid Khan" : "Dr. Rahman",
       role,
       content: postContent.trim(),
+      imageUrl: postImageUrl.trim() || undefined,
       timestamp: "Just now",
       pending: isStudent,
       comments: [],
     };
     setPosts([newPost, ...posts]);
     setPostContent("");
+    setPostImageUrl("");
     setShowPostForm(false);
     toast.success(isStudent ? "Post submitted for approval!" : "Post published!");
   };
@@ -86,7 +91,7 @@ const ClubPage = ({ clubId, onBack, onEventClick }: ClubPageProps) => {
     }
     const isStudent = role === "student";
     toast.success(isStudent ? `Event "${eventTitle}" submitted for approval!` : `Event "${eventTitle}" created!`);
-    setEventTitle(""); setEventDate(""); setEventTime(""); setEventLocation(""); setEventDesc("");
+    setEventTitle(""); setEventDate(""); setEventTime(""); setEventLocation(""); setEventDesc(""); setEventCover("");
     setShowEventForm(false);
   };
 
@@ -137,7 +142,7 @@ const ClubPage = ({ clubId, onBack, onEventClick }: ClubPageProps) => {
         </div>
       </div>
 
-      {/* Action buttons: Add Post / Add Event */}
+      {/* Action buttons */}
       <div className="flex gap-2 mb-4">
         <Button
           variant={showPostForm ? "default" : "outline"}
@@ -159,6 +164,15 @@ const ClubPage = ({ clubId, onBack, onEventClick }: ClubPageProps) => {
       {showPostForm && (
         <div className="bg-card border border-border rounded-2xl p-4 mb-4 space-y-3">
           <Textarea value={postContent} onChange={(e) => setPostContent(e.target.value)} placeholder="Share something with the club..." className="rounded-xl resize-none min-h-[80px] text-sm" />
+          <div className="flex items-center gap-2">
+            <Image size={14} className="text-muted-foreground shrink-0" />
+            <Input value={postImageUrl} onChange={(e) => setPostImageUrl(e.target.value)} placeholder="Image URL (optional)" className="rounded-xl text-xs" />
+          </div>
+          {postImageUrl && (
+            <div className="rounded-xl overflow-hidden border border-border h-32">
+              <img src={postImageUrl} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = "none")} />
+            </div>
+          )}
           {role === "student" && (
             <p className="text-[11px] text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-lg">⏳ Student posts require teacher approval before publishing</p>
           )}
@@ -169,7 +183,7 @@ const ClubPage = ({ clubId, onBack, onEventClick }: ClubPageProps) => {
         </div>
       )}
 
-      {/* Event form */}
+      {/* Event form with cover image */}
       {showEventForm && (
         <div className="bg-card border border-border rounded-2xl p-4 mb-4 space-y-3">
           <Input placeholder="Event title" value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} className="rounded-xl" />
@@ -179,6 +193,15 @@ const ClubPage = ({ clubId, onBack, onEventClick }: ClubPageProps) => {
           </div>
           <Input placeholder="Location" value={eventLocation} onChange={(e) => setEventLocation(e.target.value)} className="rounded-xl" />
           <Textarea placeholder="Description..." value={eventDesc} onChange={(e) => setEventDesc(e.target.value)} className="rounded-xl resize-none min-h-[60px] text-sm" />
+          <div className="flex items-center gap-2">
+            <Image size={14} className="text-muted-foreground shrink-0" />
+            <Input value={eventCover} onChange={(e) => setEventCover(e.target.value)} placeholder="Cover image URL (optional)" className="rounded-xl text-xs" />
+          </div>
+          {eventCover && (
+            <div className="rounded-xl overflow-hidden border border-border h-32">
+              <img src={eventCover} alt="Cover preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = "none")} />
+            </div>
+          )}
           {role === "student" && (
             <p className="text-[11px] text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-lg">⏳ Student events require teacher approval</p>
           )}
@@ -194,61 +217,68 @@ const ClubPage = ({ clubId, onBack, onEventClick }: ClubPageProps) => {
         <h2 className="text-sm font-bold text-foreground tracking-wide uppercase opacity-70 mb-3">Posts</h2>
         <div className="space-y-3">
           {posts.map((post) => (
-            <div key={post.id} className={`bg-card border rounded-2xl p-4 ${post.pending ? "border-yellow-500/30 bg-yellow-500/5" : "border-border"}`}>
-              {post.pending && (
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-semibold text-yellow-600 bg-yellow-500/10 px-2 py-0.5 rounded-full">⏳ Pending Approval</span>
-                  {role === "teacher" && (
-                    <Button size="sm" variant="outline" className="h-6 text-[10px] rounded-lg border-green-500/30 text-green-600 hover:bg-green-500/10" onClick={() => handleApprove(post.id)}>
-                      ✓ Approve
-                    </Button>
-                  )}
+            <div key={post.id} className={`bg-card border rounded-2xl overflow-hidden ${post.pending ? "border-yellow-500/30 bg-yellow-500/5" : "border-border"}`}>
+              {post.imageUrl && (
+                <div className="w-full h-40">
+                  <img src={post.imageUrl} alt="" className="w-full h-full object-cover" />
                 </div>
               )}
-              <div className="flex items-center gap-2.5 mb-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className={`text-xs font-bold ${post.role === "teacher" ? "bg-accent/15 text-accent" : "bg-primary/15 text-primary"}`}>
-                    {post.author.split(" ").map(w => w[0]).join("").slice(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{post.author}</p>
-                  <p className="text-[10px] text-muted-foreground">
-                    {post.role === "teacher" && <span className="text-accent font-semibold mr-1">Teacher</span>}
-                    {post.timestamp}
-                  </p>
+              <div className="p-4">
+                {post.pending && (
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-semibold text-yellow-600 bg-yellow-500/10 px-2 py-0.5 rounded-full">⏳ Pending Approval</span>
+                    {role === "teacher" && (
+                      <Button size="sm" variant="outline" className="h-6 text-[10px] rounded-lg border-green-500/30 text-green-600 hover:bg-green-500/10" onClick={() => handleApprove(post.id)}>
+                        ✓ Approve
+                      </Button>
+                    )}
+                  </div>
+                )}
+                <div className="flex items-center gap-2.5 mb-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className={`text-xs font-bold ${post.role === "teacher" ? "bg-accent/15 text-accent" : "bg-primary/15 text-primary"}`}>
+                      {post.author.split(" ").map(w => w[0]).join("").slice(0, 2)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{post.author}</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      {post.role === "teacher" && <span className="text-accent font-semibold mr-1">Teacher</span>}
+                      {post.timestamp}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <p className="text-sm text-foreground leading-relaxed mb-3">{post.content}</p>
+                <p className="text-sm text-foreground leading-relaxed mb-3">{post.content}</p>
 
-              {/* Comments */}
-              {post.comments.length > 0 && (
-                <div className="border-t border-border pt-2 mt-2 space-y-2">
-                  {post.comments.map((c, i) => (
-                    <div key={i} className="flex items-start gap-2 pl-2">
-                      <MessageCircle size={11} className="text-muted-foreground mt-1 shrink-0" />
-                      <div>
-                        <span className="text-xs font-semibold text-foreground">{c.author}</span>
-                        <span className="text-[10px] text-muted-foreground ml-1.5">{c.time}</span>
-                        <p className="text-xs text-foreground">{c.text}</p>
+                {/* Comments */}
+                {post.comments.length > 0 && (
+                  <div className="border-t border-border pt-2 mt-2 space-y-2">
+                    {post.comments.map((c, i) => (
+                      <div key={i} className="flex items-start gap-2 pl-2">
+                        <MessageCircle size={11} className="text-muted-foreground mt-1 shrink-0" />
+                        <div>
+                          <span className="text-xs font-semibold text-foreground">{c.author}</span>
+                          <span className="text-[10px] text-muted-foreground ml-1.5">{c.time}</span>
+                          <p className="text-xs text-foreground">{c.text}</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
 
-              {/* Comment input */}
-              <div className="flex gap-2 mt-2">
-                <Input
-                  value={commentInputs[post.id] || ""}
-                  onChange={(e) => setCommentInputs({ ...commentInputs, [post.id]: e.target.value })}
-                  onKeyDown={(e) => e.key === "Enter" && handleComment(post.id)}
-                  placeholder="Add a comment..."
-                  className="rounded-xl text-xs h-8"
-                />
-                <Button size="sm" variant="ghost" className="h-8 px-2 shrink-0" onClick={() => handleComment(post.id)}>
-                  <Send size={12} />
-                </Button>
+                {/* Comment input */}
+                <div className="flex gap-2 mt-2">
+                  <Input
+                    value={commentInputs[post.id] || ""}
+                    onChange={(e) => setCommentInputs({ ...commentInputs, [post.id]: e.target.value })}
+                    onKeyDown={(e) => e.key === "Enter" && handleComment(post.id)}
+                    placeholder="Add a comment..."
+                    className="rounded-xl text-xs h-8"
+                  />
+                  <Button size="sm" variant="ghost" className="h-8 px-2 shrink-0" onClick={() => handleComment(post.id)}>
+                    <Send size={12} />
+                  </Button>
+                </div>
               </div>
             </div>
           ))}
