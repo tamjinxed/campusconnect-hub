@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import FeedPage from "@/components/FeedPage";
@@ -16,62 +17,38 @@ type View =
   | { type: "profile" };
 
 const Index = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"feed" | "chat">("feed");
   const [view, setView] = useState<View>({ type: "feed" });
   const [registeredEvents, setRegisteredEvents] = useState<EventData[]>([]);
+
+  // Demo auth check
+  useEffect(() => {
+    const loggedIn = localStorage.getItem("campusconnect-logged-in");
+    if (!loggedIn) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const handleTabChange = (tab: "feed" | "chat") => {
     setActiveTab(tab);
     setView({ type: tab });
   };
 
-  const handleEventClick = (event: EventData) => {
-    setView({ type: "event", event });
-  };
-
-  const handleOrganizerClick = (organizerId: number) => {
-    setView({ type: "club", clubId: organizerId });
-  };
-
-  const handleBack = () => {
-    setView({ type: activeTab });
-  };
-
-  const handleProfileClick = () => {
-    setView({ type: "profile" });
-  };
-
-  const handleLogoClick = () => {
-    setActiveTab("feed");
-    setView({ type: "feed" });
-  };
+  const handleEventClick = (event: EventData) => setView({ type: "event", event });
+  const handleOrganizerClick = (organizerId: number) => setView({ type: "club", clubId: organizerId });
+  const handleBack = () => setView({ type: activeTab });
+  const handleProfileClick = () => setView({ type: "profile" });
+  const handleLogoClick = () => { setActiveTab("feed"); setView({ type: "feed" }); };
 
   const renderContent = () => {
     switch (view.type) {
       case "event":
-        return (
-          <EventDetailPage
-            event={view.event}
-            onBack={handleBack}
-            onOrganizerClick={handleOrganizerClick}
-          />
-        );
+        return <EventDetailPage event={view.event} onBack={handleBack} onOrganizerClick={handleOrganizerClick} />;
       case "club":
-        return (
-          <ClubPage
-            clubId={view.clubId}
-            onBack={handleBack}
-            onEventClick={handleEventClick}
-          />
-        );
+        return <ClubPage clubId={view.clubId} onBack={handleBack} onEventClick={handleEventClick} />;
       case "profile":
-        return (
-          <ProfilePage
-            onBack={handleBack}
-            onEventClick={handleEventClick}
-            registeredEvents={registeredEvents}
-          />
-        );
+        return <ProfilePage onBack={handleBack} onEventClick={handleEventClick} registeredEvents={registeredEvents} />;
       case "chat":
         return <ChatPage />;
       case "feed":
