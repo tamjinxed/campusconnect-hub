@@ -80,12 +80,16 @@ const AIChatView = () => {
   );
 };
 
-// Teacher Chat Page — only create classroom
+// Teacher Chat Page — create classroom + create club
 const TeacherChatPage = () => {
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(null);
+  const [activeTab, setActiveTab] = useState("classroom");
   const [showCreate, setShowCreate] = useState(false);
   const [className, setClassName] = useState("");
   const [classCode, setClassCode] = useState("");
+  const [showCreateClub, setShowCreateClub] = useState(false);
+  const [clubName, setClubName] = useState("");
+  const [clubCategory, setClubCategory] = useState("");
 
   if (selectedClassroom) {
     return <ClassroomDetail classroom={selectedClassroom} onBack={() => setSelectedClassroom(null)} />;
@@ -103,38 +107,87 @@ const TeacherChatPage = () => {
     setClassCode("");
   };
 
+  const handleCreateClub = () => {
+    if (!clubName.trim()) {
+      toast.error("Enter a club name");
+      return;
+    }
+    toast.success(`Club "${clubName}" created!`);
+    setShowCreateClub(false);
+    setClubName("");
+    setClubCategory("");
+  };
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-bold text-foreground uppercase tracking-wide opacity-70">Your Classrooms</h2>
-        <Button size="sm" variant="outline" className="rounded-xl text-xs gap-1.5" onClick={() => setShowCreate(!showCreate)}>
-          <Plus size={14} /> Create
-        </Button>
-      </div>
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <TabsList className="w-full rounded-xl bg-muted/60 p-1 mb-4">
+        <TabsTrigger value="classroom" className="flex-1 rounded-lg text-xs font-semibold">
+          Classrooms
+        </TabsTrigger>
+        <TabsTrigger value="clubs" className="flex-1 rounded-lg text-xs font-semibold">
+          Clubs
+        </TabsTrigger>
+      </TabsList>
 
-      {showCreate && (
-        <div className="bg-card border border-border rounded-2xl p-4 mb-4 space-y-3">
-          <Input
-            placeholder="Classroom name (e.g. CSE 101)"
-            value={className}
-            onChange={(e) => setClassName(e.target.value)}
-            className="rounded-xl"
-          />
-          <Input
-            placeholder="Custom code (optional)"
-            value={classCode}
-            onChange={(e) => setClassCode(e.target.value)}
-            className="rounded-xl"
-          />
-          <div className="flex gap-2">
-            <Button onClick={handleCreate} className="rounded-xl flex-1 text-xs">Create Classroom</Button>
-            <Button variant="ghost" onClick={() => setShowCreate(false)} className="rounded-xl text-xs">Cancel</Button>
-          </div>
+      <TabsContent value="classroom">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-bold text-foreground uppercase tracking-wide opacity-70">Your Classrooms</h2>
+          <Button size="sm" variant="outline" className="rounded-xl text-xs gap-1.5" onClick={() => setShowCreate(!showCreate)}>
+            <Plus size={14} /> Create
+          </Button>
         </div>
-      )}
 
-      <ClassroomList onSelect={setSelectedClassroom} />
-    </div>
+        {showCreate && (
+          <div className="bg-card border border-border rounded-2xl p-4 mb-4 space-y-3">
+            <Input placeholder="Classroom name (e.g. CSE 101)" value={className} onChange={(e) => setClassName(e.target.value)} className="rounded-xl" />
+            <Input placeholder="Custom code (optional)" value={classCode} onChange={(e) => setClassCode(e.target.value)} className="rounded-xl" />
+            <div className="flex gap-2">
+              <Button onClick={handleCreate} className="rounded-xl flex-1 text-xs">Create Classroom</Button>
+              <Button variant="ghost" onClick={() => setShowCreate(false)} className="rounded-xl text-xs">Cancel</Button>
+            </div>
+          </div>
+        )}
+
+        <ClassroomList onSelect={setSelectedClassroom} />
+      </TabsContent>
+
+      <TabsContent value="clubs">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-bold text-foreground uppercase tracking-wide opacity-70">Manage Clubs</h2>
+          <Button size="sm" variant="outline" className="rounded-xl text-xs gap-1.5" onClick={() => setShowCreateClub(!showCreateClub)}>
+            <Plus size={14} /> Create Club
+          </Button>
+        </div>
+
+        {showCreateClub && (
+          <div className="bg-card border border-border rounded-2xl p-4 mb-4 space-y-3">
+            <Input placeholder="Club name" value={clubName} onChange={(e) => setClubName(e.target.value)} className="rounded-xl" />
+            <Input placeholder="Category (e.g. Technology, Arts)" value={clubCategory} onChange={(e) => setClubCategory(e.target.value)} className="rounded-xl" />
+            <div className="flex gap-2">
+              <Button onClick={handleCreateClub} className="rounded-xl flex-1 text-xs">Create Club</Button>
+              <Button variant="ghost" onClick={() => setShowCreateClub(false)} className="rounded-xl text-xs">Cancel</Button>
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          {[
+            { name: "Robotics Club", shortName: "RC", members: 128, category: "Technology" },
+            { name: "CSE Department", shortName: "CS", members: 340, category: "Academic" },
+          ].map((club, i) => (
+            <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-card border border-border">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <span className="text-primary font-bold text-xs">{club.shortName}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">{club.name}</p>
+                <p className="text-xs text-muted-foreground">{club.members} members · {club.category}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </TabsContent>
+    </Tabs>
   );
 };
 

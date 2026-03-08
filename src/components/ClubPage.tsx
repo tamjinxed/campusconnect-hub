@@ -1,10 +1,13 @@
-import { ArrowLeft, Users, Calendar, MapPin } from "lucide-react";
+import { ArrowLeft, Users, Calendar, MapPin, Plus, Send, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { getClubById, getClubEvents } from "@/data/mockData";
 import type { EventData } from "./EventCard";
 import EventCard from "./EventCard";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface ClubPageProps {
   clubId: number;
@@ -12,10 +15,26 @@ interface ClubPageProps {
   onEventClick: (event: EventData) => void;
 }
 
+interface ClubPost {
+  id: number;
+  author: string;
+  role: "student" | "teacher";
+  content: string;
+  timestamp: string;
+}
+
 const ClubPage = ({ clubId, onBack, onEventClick }: ClubPageProps) => {
   const club = getClubById(clubId);
   const events = getClubEvents(clubId);
   const [joined, setJoined] = useState(false);
+  const [showPostForm, setShowPostForm] = useState(false);
+  const [postContent, setPostContent] = useState("");
+  const [posts, setPosts] = useState<ClubPost[]>([
+    { id: 1, author: "Dr. Rahman", role: "teacher", content: "Welcome to the club! Our next meeting is on Thursday at 3 PM. Don't forget to bring your project proposals.", timestamp: "2h ago" },
+    { id: 2, author: "Tamjid Khan", role: "student", content: "Excited for the upcoming hackathon! Anyone looking for team members?", timestamp: "5h ago" },
+  ]);
+
+  const role = (localStorage.getItem("campusconnect-role") as "student" | "teacher") || "student";
 
   if (!club) {
     return (
@@ -31,6 +50,21 @@ const ClubPage = ({ clubId, onBack, onEventClick }: ClubPageProps) => {
   const handleJoin = () => {
     setJoined(true);
     toast.success(`Joined ${club.name}!`);
+  };
+
+  const handlePost = () => {
+    if (!postContent.trim()) return;
+    const newPost: ClubPost = {
+      id: Date.now(),
+      author: role === "teacher" ? "Dr. Rahman" : "Tamjid Khan",
+      role,
+      content: postContent.trim(),
+      timestamp: "Just now",
+    };
+    setPosts([newPost, ...posts]);
+    setPostContent("");
+    setShowPostForm(false);
+    toast.success("Post published!");
   };
 
   return (
@@ -72,6 +106,57 @@ const ClubPage = ({ clubId, onBack, onEventClick }: ClubPageProps) => {
           >
             {joined ? "Joined ✓" : "Join Club"}
           </Button>
+        </div>
+      </div>
+
+      {/* Post section */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-bold text-foreground tracking-wide uppercase opacity-70">Posts</h2>
+          <Button size="sm" variant="outline" className="rounded-xl text-xs gap-1.5" onClick={() => setShowPostForm(!showPostForm)}>
+            <Plus size={14} /> New Post
+          </Button>
+        </div>
+
+        {showPostForm && (
+          <div className="bg-card border border-border rounded-2xl p-4 mb-3 space-y-3">
+            <Textarea
+              value={postContent}
+              onChange={(e) => setPostContent(e.target.value)}
+              placeholder="Share something with the club..."
+              className="rounded-xl resize-none min-h-[80px] text-sm"
+            />
+            <div className="flex justify-end gap-2">
+              <Button size="sm" variant="ghost" onClick={() => setShowPostForm(false)} className="rounded-xl text-xs">
+                Cancel
+              </Button>
+              <Button size="sm" onClick={handlePost} className="rounded-xl text-xs gap-1.5">
+                <Send size={12} /> Post
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-3">
+          {posts.map((post) => (
+            <div key={post.id} className="bg-card border border-border rounded-2xl p-4">
+              <div className="flex items-center gap-2.5 mb-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback className={`text-xs font-bold ${post.role === "teacher" ? "bg-accent/15 text-accent" : "bg-primary/15 text-primary"}`}>
+                    {post.author.split(" ").map(w => w[0]).join("").slice(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{post.author}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {post.role === "teacher" && <span className="text-accent font-semibold mr-1">Teacher</span>}
+                    {post.timestamp}
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm text-foreground leading-relaxed">{post.content}</p>
+            </div>
+          ))}
         </div>
       </div>
 
