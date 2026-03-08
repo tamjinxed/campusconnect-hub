@@ -27,13 +27,25 @@ const EventDetailPage = ({ event, onBack, onOrganizerClick }: EventDetailPagePro
       </button>
 
       <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-        <div className="h-24 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/5 flex items-end px-5 pb-4">
-          {event.tag && (
-            <span className="inline-block text-[11px] font-semibold px-3 py-1 rounded-full bg-card/90 text-accent shadow-sm">
-              {event.tag}
-            </span>
-          )}
-        </div>
+        {event.coverImage ? (
+          <div className="h-44 relative">
+            <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            {event.tag && (
+              <span className="absolute bottom-3 left-4 text-[11px] font-semibold px-3 py-1 rounded-full bg-card/90 text-accent shadow-sm">
+                {event.tag}
+              </span>
+            )}
+          </div>
+        ) : (
+          <div className="h-24 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/5 flex items-end px-5 pb-4">
+            {event.tag && (
+              <span className="inline-block text-[11px] font-semibold px-3 py-1 rounded-full bg-card/90 text-accent shadow-sm">
+                {event.tag}
+              </span>
+            )}
+          </div>
+        )}
 
         <div className="p-5 space-y-4">
           <div>

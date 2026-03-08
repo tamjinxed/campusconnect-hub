@@ -89,6 +89,7 @@ const EventCard = ({ event, onCardClick, compact }: EventCardProps) => {
           {registered ? "Registered ✓" : "Register"}
         </Button>
       )}
+      </div>
     </div>
   );
 };
