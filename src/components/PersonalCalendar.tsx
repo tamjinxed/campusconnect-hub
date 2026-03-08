@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
-import { Button } from "@/components/ui/button";
-import { useBusyDays } from "@/hooks/useBusyDays";
 import { recommendedEvents, upcomingEvents } from "@/data/mockData";
-import { classrooms } from "@/data/classroomData";
-import { CalendarDays, MapPin, Ban, Check, Clock, BookOpen } from "lucide-react";
+import { CalendarDays, MapPin, Clock, BookOpen } from "lucide-react";
 import type { EventData } from "./EventCard";
 
 function getEventDates(): { date: Date; event: EventData }[] {
