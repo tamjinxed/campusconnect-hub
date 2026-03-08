@@ -1,21 +1,24 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import FeedPage from "@/components/FeedPage";
 import ChatPage from "@/components/ChatPage";
 import EventDetailPage from "@/components/EventDetailPage";
 import ClubPage from "@/components/ClubPage";
+import ProfilePage from "@/components/ProfilePage";
 import type { EventData } from "@/components/EventCard";
 
 type View =
   | { type: "feed" }
   | { type: "chat" }
   | { type: "event"; event: EventData }
-  | { type: "club"; clubId: number };
+  | { type: "club"; clubId: number }
+  | { type: "profile" };
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<"feed" | "chat">("feed");
   const [view, setView] = useState<View>({ type: "feed" });
+  const [registeredEvents, setRegisteredEvents] = useState<EventData[]>([]);
 
   const handleTabChange = (tab: "feed" | "chat") => {
     setActiveTab(tab);
@@ -32,6 +35,10 @@ const Index = () => {
 
   const handleBack = () => {
     setView({ type: activeTab });
+  };
+
+  const handleProfileClick = () => {
+    setView({ type: "profile" });
   };
 
   const renderContent = () => {
@@ -52,6 +59,14 @@ const Index = () => {
             onEventClick={handleEventClick}
           />
         );
+      case "profile":
+        return (
+          <ProfilePage
+            onBack={handleBack}
+            onEventClick={handleEventClick}
+            registeredEvents={registeredEvents}
+          />
+        );
       case "chat":
         return <ChatPage />;
       case "feed":
@@ -62,7 +77,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <TopBar />
+      <TopBar onProfileClick={handleProfileClick} />
       <main className="pt-16 pb-20 px-4 max-w-lg mx-auto">
         {renderContent()}
       </main>
