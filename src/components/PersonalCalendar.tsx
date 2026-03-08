@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
-import { Button } from "@/components/ui/button";
-import { useBusyDays } from "@/hooks/useBusyDays";
 import { recommendedEvents, upcomingEvents } from "@/data/mockData";
-import { classrooms } from "@/data/classroomData";
-import { CalendarDays, MapPin, Ban, Check, Clock, BookOpen } from "lucide-react";
+import { CalendarDays, MapPin, Clock, BookOpen } from "lucide-react";
 import type { EventData } from "./EventCard";
 
 function getEventDates(): { date: Date; event: EventData }[] {
@@ -19,7 +16,6 @@ function getEventDates(): { date: Date; event: EventData }[] {
     });
 }
 
-// Build class schedule from classroom data
 const classSchedule = [
   { time: "8:00 - 9:30 AM", course: "CSE 101 - Data Structures", room: "Room 301" },
   { time: "10:00 - 11:30 AM", course: "MTH 201 - Linear Algebra", room: "Room 205" },
@@ -29,68 +25,38 @@ const classSchedule = [
 
 const PersonalCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const { busyDays, toggleBusy, isBusy } = useBusyDays();
   const eventDates = getEventDates();
-
   const eventDatesOnly = eventDates.map((ed) => ed.date);
 
   const selectedKey = selectedDate?.toISOString().split("T")[0];
-  const todayKey = new Date().toISOString().split("T")[0];
   const eventsOnDay = selectedDate
-    ? eventDates.filter(
-        (ed) => ed.date.toISOString().split("T")[0] === selectedKey
-      )
+    ? eventDates.filter((ed) => ed.date.toISOString().split("T")[0] === selectedKey)
     : [];
-  const dayIsBusy = selectedDate ? isBusy(selectedDate) : false;
 
-  // Show classes if selected date is today or a weekday
-  const isWeekday = selectedDate ? selectedDate.getDay() >= 0 && selectedDate.getDay() <= 4 : false; // Sun-Thu for BD universities
+  const isWeekday = selectedDate ? selectedDate.getDay() >= 0 && selectedDate.getDay() <= 4 : false;
   const showClasses = selectedDate && isWeekday;
 
   return (
     <div className="mb-6">
-      <div className="bg-card rounded-2xl border border-border p-3 shadow-sm">
+      <div className="bg-card rounded-2xl border border-border p-2 shadow-sm">
         <Calendar
           mode="single"
           selected={selectedDate}
           onSelect={setSelectedDate}
-          modifiers={{
-            event: eventDatesOnly,
-            busy: busyDays,
-          }}
+          modifiers={{ event: eventDatesOnly }}
           modifiersClassNames={{
             event: "ring-2 ring-primary/40 ring-inset font-bold text-primary",
-            busy: "bg-destructive/15 text-destructive line-through",
           }}
-          className="w-full"
+          className="w-full [&_.rdp-table]:w-full [&_.rdp-head_row]:flex [&_.rdp-head_row]:justify-between [&_.rdp-row]:flex [&_.rdp-row]:justify-between [&_.rdp-cell]:flex-1 [&_.rdp-head_cell]:flex-1 [&_.rdp-day]:w-full [&_.rdp-day]:aspect-square"
         />
       </div>
 
       {selectedDate && (
         <div className="mt-3 bg-card rounded-2xl border border-border p-4 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-foreground">
-              {selectedDate.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
-            </h3>
-            <Button
-              size="sm"
-              variant={dayIsBusy ? "destructive" : "outline"}
-              className="text-xs h-7 rounded-lg"
-              onClick={() => toggleBusy(selectedDate)}
-            >
-              {dayIsBusy ? (
-                <>
-                  <Check size={13} className="mr-1" /> Busy
-                </>
-              ) : (
-                <>
-                  <Ban size={13} className="mr-1" /> Mark Busy
-                </>
-              )}
-            </Button>
-          </div>
+          <h3 className="text-sm font-bold text-foreground mb-3">
+            {selectedDate.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+          </h3>
 
-          {/* Classes for this day */}
           {showClasses && (
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-2">
@@ -112,7 +78,6 @@ const PersonalCalendar = () => {
             </div>
           )}
 
-          {/* Events on this day */}
           {eventsOnDay.length > 0 && (
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -141,9 +106,7 @@ const PersonalCalendar = () => {
           )}
 
           {eventsOnDay.length === 0 && !showClasses && (
-            <p className="text-xs text-muted-foreground">
-              {dayIsBusy ? "You marked this day as busy." : "No events or classes on this day."}
-            </p>
+            <p className="text-xs text-muted-foreground">No events or classes on this day.</p>
           )}
         </div>
       )}
