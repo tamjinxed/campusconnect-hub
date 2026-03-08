@@ -1,80 +1,118 @@
 import type { EventData } from "@/components/EventCard";
 
-export const recommendedEvents: EventData[] = [
+export interface ClubData {
+  id: number;
+  name: string;
+  shortName: string;
+  description: string;
+  memberCount: number;
+  category: string;
+  events: number[]; // event ids
+}
+
+export const clubs: ClubData[] = [
+  { id: 1, name: "Robotics Club", shortName: "RC", description: "Building the future with robotics and AI. Weekly workshops, competitions, and hands-on projects.", memberCount: 128, category: "Technology", events: [1] },
+  { id: 2, name: "Entrepreneurship Cell", shortName: "EC", description: "Fostering startup culture on campus. Pitch nights, mentorship, and networking events.", memberCount: 95, category: "Business", events: [2] },
+  { id: 3, name: "Art Society", shortName: "AS", description: "Creative expression through photography, painting, and digital art.", memberCount: 72, category: "Arts", events: [3] },
+  { id: 4, name: "CSE Department", shortName: "CS", description: "Official Computer Science & Engineering department. Academic events, hackathons, and seminars.", memberCount: 340, category: "Academic", events: [4] },
+  { id: 5, name: "Placement Cell", shortName: "PC", description: "Connecting students with top employers. Career fairs, resume workshops, and interview prep.", memberCount: 500, category: "Career", events: [5] },
+  { id: 6, name: "Student Union", shortName: "SU", description: "The voice of students. Organizing festivals, cultural programs, and campus improvements.", memberCount: 1200, category: "Campus", events: [6] },
+];
+
+// Your Campus = events from your department/section
+export const yourCampusEvents: EventData[] = [
   {
     id: 1,
     title: "AI Workshop",
     organizer: "Robotics Club",
+    organizerId: 1,
     date: "May 12",
     location: "Auditorium",
-    description: "Intro to machine learning basics. Hands-on session with Python and TensorFlow for beginners.",
+    description: "Intro to machine learning basics. Hands-on session with Python and TensorFlow for beginners. Learn how neural networks work and build your first model.",
     daysUntil: 2,
     tag: "Workshop",
+    participants: 42,
+    category: "technology",
   },
-  {
-    id: 2,
-    title: "Startup Pitch Night",
-    organizer: "Entrepreneurship Cell",
-    date: "May 14",
-    location: "Business Hall",
-    description: "Present your startup ideas to a panel of investors and mentors.",
-    daysUntil: 4,
-    tag: "Competition",
-  },
-  {
-    id: 3,
-    title: "Photography Walk",
-    organizer: "Art Society",
-    date: "May 15",
-    location: "Campus Garden",
-    description: "Explore campus through the lens. Bring your camera or phone.",
-    daysUntil: 5,
-    tag: "Social",
-  },
-];
-
-export const upcomingEvents: EventData[] = [
   {
     id: 4,
     title: "Hackathon 2025",
     organizer: "CSE Department",
+    organizerId: 4,
     date: "May 20",
     location: "Tech Lab",
-    description: "48-hour coding marathon. Build something amazing with your team.",
+    description: "48-hour coding marathon. Build something amazing with your team. Prizes worth $5000. Teams of 2-4 members. All skill levels welcome.",
     daysUntil: 10,
     tag: "Hackathon",
+    participants: 156,
+    category: "technology",
   },
-  {
-    id: 5,
-    title: "Career Fair",
-    organizer: "Placement Cell",
-    date: "May 22",
-    location: "Main Hall",
-    description: "Meet top recruiters from leading tech companies.",
-    daysUntil: 12,
-  },
-  {
-    id: 6,
-    title: "Cultural Fest",
-    organizer: "Student Union",
-    date: "May 25",
-    location: "Open Ground",
-    description: "Music, dance, food stalls and more. The biggest event of the semester.",
-    daysUntil: 15,
-    tag: "Festival",
-  },
-];
-
-export const announcements: EventData[] = [
   {
     id: 7,
     title: "Library Hours Extended",
     organizer: "University Admin",
     date: "Effective May 10",
     location: "Central Library",
-    description: "Library will remain open until midnight during exam season.",
+    description: "Library will remain open until midnight during exam season. Study rooms can be booked online.",
     daysUntil: -1,
     tag: "Notice",
+    participants: 0,
+    category: "announcement",
+  },
+];
+
+// Public Events = open to all students across campus
+export const publicEvents: EventData[] = [
+  {
+    id: 2,
+    title: "Startup Pitch Night",
+    organizer: "Entrepreneurship Cell",
+    organizerId: 2,
+    date: "May 14",
+    location: "Business Hall",
+    description: "Present your startup ideas to a panel of investors and mentors. Top 3 pitches win seed funding and incubation support.",
+    daysUntil: 4,
+    tag: "Competition",
+    participants: 78,
+    category: "business",
+  },
+  {
+    id: 3,
+    title: "Photography Walk",
+    organizer: "Art Society",
+    organizerId: 3,
+    date: "May 15",
+    location: "Campus Garden",
+    description: "Explore campus through the lens. Bring your camera or phone. Professional photographers will guide beginners.",
+    daysUntil: 5,
+    tag: "Social",
+    participants: 35,
+    category: "arts",
+  },
+  {
+    id: 5,
+    title: "Career Fair",
+    organizer: "Placement Cell",
+    organizerId: 5,
+    date: "May 22",
+    location: "Main Hall",
+    description: "Meet top recruiters from leading tech companies. Bring your resume and dress professionally. 50+ companies attending.",
+    daysUntil: 12,
+    participants: 420,
+    category: "career",
+  },
+  {
+    id: 6,
+    title: "Cultural Fest",
+    organizer: "Student Union",
+    organizerId: 6,
+    date: "May 25",
+    location: "Open Ground",
+    description: "Music, dance, food stalls and more. The biggest event of the semester. Live performances by campus bands and guest artists.",
+    daysUntil: 15,
+    tag: "Festival",
+    participants: 890,
+    category: "social",
   },
   {
     id: 8,
@@ -82,10 +120,33 @@ export const announcements: EventData[] = [
     organizer: "Transport Office",
     date: "Starting May 15",
     location: "Campus Gate",
-    description: "New shuttle service connecting east campus to downtown.",
+    description: "New shuttle service connecting east campus to downtown. Runs every 30 minutes from 7 AM to 10 PM.",
     daysUntil: -1,
+    participants: 0,
+    category: "announcement",
   },
 ];
+
+export const allEvents: EventData[] = [...yourCampusEvents, ...publicEvents];
+
+export function getEventById(id: number): EventData | undefined {
+  return allEvents.find((e) => e.id === id);
+}
+
+export function getClubById(id: number): ClubData | undefined {
+  return clubs.find((c) => c.id === id);
+}
+
+export function getClubEvents(clubId: number): EventData[] {
+  const club = getClubById(clubId);
+  if (!club) return [];
+  return club.events.map((eid) => getEventById(eid)).filter(Boolean) as EventData[];
+}
+
+// Keep old exports for compatibility
+export const recommendedEvents = yourCampusEvents;
+export const upcomingEvents = publicEvents;
+export const announcements = allEvents.filter((e) => e.category === "announcement");
 
 export interface ChatGroup {
   id: number;

@@ -1,4 +1,4 @@
-import { CalendarDays, MapPin, Clock } from "lucide-react";
+import { CalendarDays, MapPin, Clock, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -7,11 +7,14 @@ export interface EventData {
   id: number;
   title: string;
   organizer: string;
+  organizerId?: number;
   date: string;
   location: string;
   description: string;
   daysUntil: number;
   tag?: string;
+  participants?: number;
+  category?: string;
 }
 
 interface EventCardProps {
@@ -42,7 +45,7 @@ const EventCard = ({ event, onCardClick, compact }: EventCardProps) => {
         </span>
       )}
       <h3 className="font-semibold text-foreground text-[15px] leading-snug mb-1">{event.title}</h3>
-      <p className="text-muted-foreground text-xs mb-2">{event.organizer}</p>
+      <p className="text-primary text-xs font-medium mb-2">{event.organizer}</p>
       <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-3">
         <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
           <CalendarDays size={13} className="shrink-0" />
@@ -58,18 +61,26 @@ const EventCard = ({ event, onCardClick, compact }: EventCardProps) => {
             <span>{event.daysUntil === 0 ? "Today!" : `In ${event.daysUntil}d`}</span>
           </div>
         )}
+        {event.participants != null && event.participants > 0 && (
+          <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
+            <Users size={13} className="shrink-0" />
+            <span>{event.participants}</span>
+          </div>
+        )}
       </div>
       {!compact && (
         <p className="text-muted-foreground text-xs leading-relaxed mb-3 line-clamp-2">{event.description}</p>
       )}
-      <Button
-        size="sm"
-        onClick={handleRegister}
-        disabled={registered}
-        className={`w-full text-xs h-8 rounded-xl ${registered ? "bg-muted text-muted-foreground" : ""}`}
-      >
-        {registered ? "Registered ✓" : "Register"}
-      </Button>
+      {event.category !== "announcement" && (
+        <Button
+          size="sm"
+          onClick={handleRegister}
+          disabled={registered}
+          className={`w-full text-xs h-8 rounded-xl ${registered ? "bg-muted text-muted-foreground" : ""}`}
+        >
+          {registered ? "Registered ✓" : "Register"}
+        </Button>
+      )}
     </div>
   );
 };
