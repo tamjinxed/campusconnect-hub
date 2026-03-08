@@ -21,15 +21,12 @@ const EventDetailPage = ({ event, onBack, onOrganizerClick }: EventDetailPagePro
 
   return (
     <div className="pb-6">
-      {/* Header */}
       <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4 hover:text-foreground transition-colors">
         <ArrowLeft size={18} />
         <span>Back</span>
       </button>
 
-      {/* Hero card */}
       <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-        {/* Color banner */}
         <div className="h-24 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/5 flex items-end px-5 pb-4">
           {event.tag && (
             <span className="inline-block text-[11px] font-semibold px-3 py-1 rounded-full bg-card/90 text-accent shadow-sm">
@@ -50,7 +47,6 @@ const EventDetailPage = ({ event, onBack, onOrganizerClick }: EventDetailPagePro
             </button>
           </div>
 
-          {/* Info grid */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/50">
               <CalendarDays size={16} className="text-primary shrink-0" />
@@ -59,6 +55,15 @@ const EventDetailPage = ({ event, onBack, onOrganizerClick }: EventDetailPagePro
                 <p className="text-sm font-medium text-foreground">{event.date}</p>
               </div>
             </div>
+            {event.time && (
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/50">
+                <Clock size={16} className="text-primary shrink-0" />
+                <div>
+                  <p className="text-[11px] text-muted-foreground">Time</p>
+                  <p className="text-sm font-medium text-foreground">{event.time}</p>
+                </div>
+              </div>
+            )}
             <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/50">
               <MapPin size={16} className="text-primary shrink-0" />
               <div>
@@ -86,20 +91,16 @@ const EventDetailPage = ({ event, onBack, onOrganizerClick }: EventDetailPagePro
             </div>
           </div>
 
-          {/* Description */}
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-2">About this event</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">{event.description}</p>
           </div>
 
-          {/* Register */}
           {event.category !== "announcement" && (
             <Button
               onClick={handleRegister}
               disabled={registered}
-              className={`w-full rounded-xl h-11 font-semibold ${
-                registered ? "bg-muted text-muted-foreground" : ""
-              }`}
+              className={`w-full rounded-xl h-11 font-semibold ${registered ? "bg-muted text-muted-foreground" : ""}`}
             >
               {registered ? "Registered ✓" : "Register Now"}
             </Button>
