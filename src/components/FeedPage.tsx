@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { CalendarDays, LayoutList } from "lucide-react";
 import EventCard, { type EventData } from "./EventCard";
 import EventDetailModal from "./EventDetailModal";
+import PersonalCalendar from "./PersonalCalendar";
 import { recommendedEvents, upcomingEvents, announcements } from "@/data/mockData";
 
 const FeedSection = ({
@@ -36,12 +38,39 @@ const FeedSection = ({
 
 const FeedPage = () => {
   const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   return (
     <div className="pb-4">
-      <FeedSection title="Recommended for You" events={recommendedEvents} horizontal onCardClick={setSelectedEvent} />
-      <FeedSection title="Upcoming Events" events={upcomingEvents} horizontal onCardClick={setSelectedEvent} />
-      <FeedSection title="Campus Announcements" events={announcements} onCardClick={setSelectedEvent} />
+      {/* Toggle */}
+      <div className="flex items-center gap-2 mb-4">
+        <button
+          onClick={() => setShowCalendar(false)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
+            !showCalendar ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+          }`}
+        >
+          <LayoutList size={14} /> Feed
+        </button>
+        <button
+          onClick={() => setShowCalendar(true)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
+            showCalendar ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+          }`}
+        >
+          <CalendarDays size={14} /> Calendar
+        </button>
+      </div>
+
+      {showCalendar ? (
+        <PersonalCalendar />
+      ) : (
+        <>
+          <FeedSection title="Recommended for You" events={recommendedEvents} horizontal onCardClick={setSelectedEvent} />
+          <FeedSection title="Upcoming Events" events={upcomingEvents} horizontal onCardClick={setSelectedEvent} />
+          <FeedSection title="Campus Announcements" events={announcements} onCardClick={setSelectedEvent} />
+        </>
+      )}
 
       <EventDetailModal
         event={selectedEvent}
