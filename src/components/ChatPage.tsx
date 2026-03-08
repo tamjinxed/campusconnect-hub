@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import ChatList from "./ChatList";
 import ChatInterface from "./ChatInterface";
@@ -10,6 +10,7 @@ import type { Classroom } from "@/data/classroomData";
 const ChatPage = () => {
   const [selectedGroup, setSelectedGroup] = useState<ChatGroup | null>(null);
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(null);
+  const [activeTab, setActiveTab] = useState("classroom");
 
   if (selectedGroup) {
     return <ChatInterface group={selectedGroup} onBack={() => setSelectedGroup(null)} />;
@@ -20,7 +21,7 @@ const ChatPage = () => {
   }
 
   return (
-    <Tabs defaultValue="classroom" className="w-full">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="w-full rounded-xl bg-muted/60 p-1 mb-4">
         <TabsTrigger value="classroom" className="flex-1 rounded-lg text-xs font-semibold">
           Classroom
