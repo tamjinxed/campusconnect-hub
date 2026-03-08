@@ -17,13 +17,11 @@ const FeedSection = ({
   onCardClick: (e: EventData) => void;
 }) => (
   <section className="mb-6">
-    <h2 className="text-base font-bold text-foreground mb-3 px-1">{title}</h2>
+    <h2 className="text-sm font-bold text-foreground mb-3 tracking-wide uppercase opacity-70">{title}</h2>
     {horizontal ? (
-      <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1 snap-x snap-mandatory">
+      <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 snap-x snap-mandatory">
         {events.map((e) => (
-          <div key={e.id} className="min-w-[260px] max-w-[280px]">
-            <EventCard event={e} onCardClick={onCardClick} />
-          </div>
+          <EventCard key={e.id} event={e} onCardClick={onCardClick} compact />
         ))}
       </div>
     ) : (
@@ -43,19 +41,19 @@ const FeedPage = () => {
   return (
     <div className="pb-4">
       {/* Toggle */}
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-5">
         <button
           onClick={() => setShowCalendar(false)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
-            !showCalendar ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-colors ${
+            !showCalendar ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted text-muted-foreground"
           }`}
         >
           <LayoutList size={14} /> Feed
         </button>
         <button
           onClick={() => setShowCalendar(true)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
-            showCalendar ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-colors ${
+            showCalendar ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted text-muted-foreground"
           }`}
         >
           <CalendarDays size={14} /> Calendar
