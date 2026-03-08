@@ -185,7 +185,17 @@ const ProfilePage = ({ onBack, onEventClick, registeredEvents }: ProfilePageProp
       </div>
 
       {/* Logout button */}
-      <Button variant="outline" className="w-full rounded-xl h-10 text-destructive border-destructive/20 hover:bg-destructive/5">
+      <Button
+        variant="outline"
+        className="w-full rounded-xl h-10 text-destructive border-destructive/20 hover:bg-destructive/5"
+        onClick={() => {
+          localStorage.removeItem("campusconnect-logged-in");
+          localStorage.removeItem("campusconnect-role");
+          localStorage.removeItem("campusconnect-profile");
+          toast.success("Logged out!");
+          navigate("/login");
+        }}
+      >
         <LogOut size={16} className="mr-2" />
         Log Out
       </Button>
