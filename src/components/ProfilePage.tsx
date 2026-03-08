@@ -24,6 +24,7 @@ const initialProfile = {
 };
 
 const ProfilePage = ({ onBack, onEventClick, registeredEvents }: ProfilePageProps) => {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(initialProfile);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(initialProfile);
