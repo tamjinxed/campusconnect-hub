@@ -7,7 +7,7 @@ export interface ClubData {
   description: string;
   memberCount: number;
   category: string;
-  events: number[]; // event ids
+  events: number[];
 }
 
 export const clubs: ClubData[] = [
@@ -19,7 +19,6 @@ export const clubs: ClubData[] = [
   { id: 6, name: "Student Union", shortName: "SU", description: "The voice of students. Organizing festivals, cultural programs, and campus improvements.", memberCount: 1200, category: "Campus", events: [6] },
 ];
 
-// Your Campus = events from your department/section
 export const yourCampusEvents: EventData[] = [
   {
     id: 1,
@@ -27,6 +26,7 @@ export const yourCampusEvents: EventData[] = [
     organizer: "Robotics Club",
     organizerId: 1,
     date: "May 12",
+    time: "2:00 PM - 5:00 PM",
     location: "Auditorium",
     description: "Intro to machine learning basics. Hands-on session with Python and TensorFlow for beginners. Learn how neural networks work and build your first model.",
     daysUntil: 2,
@@ -40,6 +40,7 @@ export const yourCampusEvents: EventData[] = [
     organizer: "CSE Department",
     organizerId: 4,
     date: "May 20",
+    time: "9:00 AM - 9:00 AM (48h)",
     location: "Tech Lab",
     description: "48-hour coding marathon. Build something amazing with your team. Prizes worth $5000. Teams of 2-4 members. All skill levels welcome.",
     daysUntil: 10,
@@ -61,7 +62,6 @@ export const yourCampusEvents: EventData[] = [
   },
 ];
 
-// Public Events = open to all students across campus
 export const publicEvents: EventData[] = [
   {
     id: 2,
@@ -69,6 +69,7 @@ export const publicEvents: EventData[] = [
     organizer: "Entrepreneurship Cell",
     organizerId: 2,
     date: "May 14",
+    time: "6:00 PM - 9:00 PM",
     location: "Business Hall",
     description: "Present your startup ideas to a panel of investors and mentors. Top 3 pitches win seed funding and incubation support.",
     daysUntil: 4,
@@ -82,6 +83,7 @@ export const publicEvents: EventData[] = [
     organizer: "Art Society",
     organizerId: 3,
     date: "May 15",
+    time: "7:00 AM - 10:00 AM",
     location: "Campus Garden",
     description: "Explore campus through the lens. Bring your camera or phone. Professional photographers will guide beginners.",
     daysUntil: 5,
@@ -95,6 +97,7 @@ export const publicEvents: EventData[] = [
     organizer: "Placement Cell",
     organizerId: 5,
     date: "May 22",
+    time: "10:00 AM - 4:00 PM",
     location: "Main Hall",
     description: "Meet top recruiters from leading tech companies. Bring your resume and dress professionally. 50+ companies attending.",
     daysUntil: 12,
@@ -107,6 +110,7 @@ export const publicEvents: EventData[] = [
     organizer: "Student Union",
     organizerId: 6,
     date: "May 25",
+    time: "11:00 AM - 10:00 PM",
     location: "Open Ground",
     description: "Music, dance, food stalls and more. The biggest event of the semester. Live performances by campus bands and guest artists.",
     daysUntil: 15,
@@ -143,7 +147,6 @@ export function getClubEvents(clubId: number): EventData[] {
   return club.events.map((eid) => getEventById(eid)).filter(Boolean) as EventData[];
 }
 
-// Keep old exports for compatibility
 export const recommendedEvents = yourCampusEvents;
 export const upcomingEvents = publicEvents;
 export const announcements = allEvents.filter((e) => e.category === "announcement");

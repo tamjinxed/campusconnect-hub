@@ -9,6 +9,7 @@ export interface EventData {
   organizer: string;
   organizerId?: number;
   date: string;
+  time?: string;
   location: string;
   description: string;
   daysUntil: number;
@@ -49,7 +50,7 @@ const EventCard = ({ event, onCardClick, compact }: EventCardProps) => {
       <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-3">
         <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
           <CalendarDays size={13} className="shrink-0" />
-          <span>{event.date}</span>
+          <span>{event.date}{event.time ? ` · ${event.time}` : ""}</span>
         </div>
         <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
           <MapPin size={13} className="shrink-0" />
