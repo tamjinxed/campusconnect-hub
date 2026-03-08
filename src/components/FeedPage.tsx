@@ -1,47 +1,41 @@
 import { useState } from "react";
 import { CalendarDays, LayoutList } from "lucide-react";
 import EventCard, { type EventData } from "./EventCard";
-import EventDetailModal from "./EventDetailModal";
 import PersonalCalendar from "./PersonalCalendar";
-import { recommendedEvents, upcomingEvents, announcements } from "@/data/mockData";
+import { yourCampusEvents, publicEvents } from "@/data/mockData";
+
+interface FeedPageProps {
+  onEventClick: (event: EventData) => void;
+  onOrganizerClick?: (organizerId: number) => void;
+}
 
 const FeedSection = ({
   title,
   events,
-  horizontal,
   onCardClick,
 }: {
   title: string;
   events: EventData[];
-  horizontal?: boolean;
   onCardClick: (e: EventData) => void;
 }) => (
   <section className="mb-6">
     <h2 className="text-sm font-bold text-foreground mb-3 tracking-wide uppercase opacity-70">{title}</h2>
-    {horizontal ? (
-      <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 snap-x snap-mandatory">
-        {events.map((e) => (
-          <EventCard key={e.id} event={e} onCardClick={onCardClick} compact />
-        ))}
-      </div>
-    ) : (
-      <div className="flex flex-col gap-3">
-        {events.map((e) => (
-          <EventCard key={e.id} event={e} onCardClick={onCardClick} />
-        ))}
-      </div>
-    )}
+    <div className="flex flex-col gap-3">
+      {events.map((e) => (
+        <EventCard key={e.id} event={e} onCardClick={onCardClick} />
+      ))}
+    </div>
   </section>
 );
 
-const FeedPage = () => {
-  const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
+const FeedPage = ({ onEventClick }: FeedPageProps) => {
   const [showCalendar, setShowCalendar] = useState(false);
+  const [activeSegment, setActiveSegment] = useState<"campus" | "public">("campus");
 
   return (
     <div className="pb-4">
-      {/* Toggle */}
-      <div className="flex items-center gap-2 mb-5">
+      {/* Top toggle: Feed / Calendar */}
+      <div className="flex items-center gap-2 mb-4">
         <button
           onClick={() => setShowCalendar(false)}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-colors ${
@@ -64,17 +58,45 @@ const FeedPage = () => {
         <PersonalCalendar />
       ) : (
         <>
-          <FeedSection title="Recommended for You" events={recommendedEvents} horizontal onCardClick={setSelectedEvent} />
-          <FeedSection title="Upcoming Events" events={upcomingEvents} horizontal onCardClick={setSelectedEvent} />
-          <FeedSection title="Campus Announcements" events={announcements} onCardClick={setSelectedEvent} />
+          {/* Segment toggle: Your Campus / Public Events */}
+          <div className="flex rounded-xl bg-muted/60 p-1 mb-5">
+            <button
+              onClick={() => setActiveSegment("campus")}
+              className={`flex-1 text-xs font-semibold py-2 rounded-lg transition-all ${
+                activeSegment === "campus"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground"
+              }`}
+            >
+              Your Campus
+            </button>
+            <button
+              onClick={() => setActiveSegment("public")}
+              className={`flex-1 text-xs font-semibold py-2 rounded-lg transition-all ${
+                activeSegment === "public"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground"
+              }`}
+            >
+              Public Events
+            </button>
+          </div>
+
+          {activeSegment === "campus" ? (
+            <FeedSection
+              title="Your Campus"
+              events={yourCampusEvents}
+              onCardClick={onEventClick}
+            />
+          ) : (
+            <FeedSection
+              title="Public Events"
+              events={publicEvents}
+              onCardClick={onEventClick}
+            />
+          )}
         </>
       )}
-
-      <EventDetailModal
-        event={selectedEvent}
-        open={!!selectedEvent}
-        onOpenChange={(open) => !open && setSelectedEvent(null)}
-      />
     </div>
   );
 };
