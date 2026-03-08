@@ -47,7 +47,7 @@ const PersonalCalendar = () => {
           modifiersClassNames={{
             event: "ring-2 ring-primary/40 ring-inset font-bold text-primary",
           }}
-          className="w-full [&_.rdp-table]:w-full [&_.rdp-head_row]:flex [&_.rdp-head_row]:justify-between [&_.rdp-row]:flex [&_.rdp-row]:justify-between [&_.rdp-cell]:flex-1 [&_.rdp-head_cell]:flex-1 [&_.rdp-day]:w-full [&_.rdp-day]:aspect-square"
+          className="w-full"
         />
       </div>
 

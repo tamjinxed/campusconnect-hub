@@ -16,6 +16,11 @@ const Login = () => {
       toast.error("Please fill in all fields.");
       return;
     }
+    // Demo: set logged in with default student role if none exists
+    if (!localStorage.getItem("campusconnect-role")) {
+      localStorage.setItem("campusconnect-role", "student");
+    }
+    localStorage.setItem("campusconnect-logged-in", "true");
     toast.success("Logged in successfully!");
     navigate("/");
   };
@@ -23,7 +28,6 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm space-y-8">
-        {/* Logo */}
         <div className="flex flex-col items-center gap-3">
           <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shadow-lg">
             <span className="text-primary-foreground font-bold text-2xl">CC</span>
@@ -32,7 +36,6 @@ const Login = () => {
           <p className="text-muted-foreground text-sm text-center">Your unified campus platform</p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
