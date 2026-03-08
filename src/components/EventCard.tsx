@@ -16,6 +16,7 @@ export interface EventData {
   tag?: string;
   participants?: number;
   category?: string;
+  coverImage?: string;
 }
 
 interface EventCardProps {
