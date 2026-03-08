@@ -26,22 +26,18 @@ const classSchedule = [
 
 const PersonalCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const { busyDays, toggleBusy, isBusy } = useBusyDays();
   const eventDates = getEventDates();
 
   const eventDatesOnly = eventDates.map((ed) => ed.date);
 
   const selectedKey = selectedDate?.toISOString().split("T")[0];
-  const todayKey = new Date().toISOString().split("T")[0];
   const eventsOnDay = selectedDate
     ? eventDates.filter(
         (ed) => ed.date.toISOString().split("T")[0] === selectedKey
       )
     : [];
-  const dayIsBusy = selectedDate ? isBusy(selectedDate) : false;
 
-  // Show classes if selected date is today or a weekday
-  const isWeekday = selectedDate ? selectedDate.getDay() >= 0 && selectedDate.getDay() <= 4 : false; // Sun-Thu for BD universities
+  const isWeekday = selectedDate ? selectedDate.getDay() >= 0 && selectedDate.getDay() <= 4 : false;
   const showClasses = selectedDate && isWeekday;
 
   return (
