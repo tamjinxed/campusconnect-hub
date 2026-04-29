@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { GraduationCap, BookOpenCheck } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"student" | "teacher">("student");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,12 +18,9 @@ const Login = () => {
       toast.error("Please fill in all fields.");
       return;
     }
-    // Demo: set logged in with default student role if none exists
-    if (!localStorage.getItem("campusconnect-role")) {
-      localStorage.setItem("campusconnect-role", "student");
-    }
+    localStorage.setItem("campusconnect-role", role);
     localStorage.setItem("campusconnect-logged-in", "true");
-    toast.success("Logged in successfully!");
+    toast.success(`Logged in as ${role === "teacher" ? "Teacher" : "Student"}!`);
     navigate("/");
   };
 
@@ -34,6 +33,37 @@ const Login = () => {
           </div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">CampusConnect</h1>
           <p className="text-muted-foreground text-sm text-center">Your unified campus platform</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => setRole("student")}
+            className={`flex items-center gap-3 p-3 rounded-2xl border-2 transition-all ${
+              role === "student"
+                ? "border-primary bg-primary/5"
+                : "border-border bg-card hover:border-primary/50"
+            }`}
+          >
+            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <GraduationCap size={18} className="text-primary" />
+            </div>
+            <span className="font-semibold text-sm text-foreground">Student</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRole("teacher")}
+            className={`flex items-center gap-3 p-3 rounded-2xl border-2 transition-all ${
+              role === "teacher"
+                ? "border-primary bg-primary/5"
+                : "border-border bg-card hover:border-primary/50"
+            }`}
+          >
+            <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+              <BookOpenCheck size={18} className="text-accent" />
+            </div>
+            <span className="font-semibold text-sm text-foreground">Teacher</span>
+          </button>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
