@@ -35,6 +35,37 @@ const Login = () => {
           <p className="text-muted-foreground text-sm text-center">Your unified campus platform</p>
         </div>
 
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => setRole("student")}
+            className={`flex items-center gap-3 p-3 rounded-2xl border-2 transition-all ${
+              role === "student"
+                ? "border-primary bg-primary/5"
+                : "border-border bg-card hover:border-primary/50"
+            }`}
+          >
+            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <GraduationCap size={18} className="text-primary" />
+            </div>
+            <span className="font-semibold text-sm text-foreground">Student</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRole("teacher")}
+            className={`flex items-center gap-3 p-3 rounded-2xl border-2 transition-all ${
+              role === "teacher"
+                ? "border-primary bg-primary/5"
+                : "border-border bg-card hover:border-primary/50"
+            }`}
+          >
+            <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+              <BookOpenCheck size={18} className="text-accent" />
+            </div>
+            <span className="font-semibold text-sm text-foreground">Teacher</span>
+          </button>
+        </div>
+
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
