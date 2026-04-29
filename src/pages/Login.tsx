@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { GraduationCap, BookOpenCheck } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"student" | "teacher">("student");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,12 +18,9 @@ const Login = () => {
       toast.error("Please fill in all fields.");
       return;
     }
-    // Demo: set logged in with default student role if none exists
-    if (!localStorage.getItem("campusconnect-role")) {
-      localStorage.setItem("campusconnect-role", "student");
-    }
+    localStorage.setItem("campusconnect-role", role);
     localStorage.setItem("campusconnect-logged-in", "true");
-    toast.success("Logged in successfully!");
+    toast.success(`Logged in as ${role === "teacher" ? "Teacher" : "Student"}!`);
     navigate("/");
   };
 
